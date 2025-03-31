@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="file" id="fileInput">
+    <!-- Load Firebase scripts -->
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.4.0/firebase-storage.js"></script>
+
+    <script>
+        // Wait for Firebase to load
+        document.addEventListener('DOMContentLoaded', function() {
+            const firebaseConfig = {
+                apiKey: "AIzaSyBHsf5jMehUsOdbG2ovZlitsjybOMgQJIc",
+                authDomain: "cyberwebsite-5d3ad.firebaseapp.com",
+                databaseURL: "https://cyberwebsite-5d3ad-default-rtdb.firebaseio.com",
+                projectId: "cyberwebsite-5d3ad",
+                storageBucket: "cyberwebsite-5d3ad.appspot.com", // Fixed storageBucket format
+                messagingSenderId: "607930749503",
+                appId: "1:607930749503:web:4ca143e3f525bad5955e8a",
+                measurementId: "G-WK0XHSC2CK"
+            };
+
+            // Initialize Firebase
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            } else {
+                firebase.app();
+            }
+            
+            const storage = firebase.storage();
+
+            function uploadFile(file) {  // Fixed parameter name
+                const storageRef = storage.ref();
+                const imageRef = storageRef.child("images/" + file.name);
+
+                imageRef.put(file)
+                    .then((snapshot) => {
+                        console.log("uploaded a file: ", snapshot);
+                        return snapshot.ref.getDownloadURL();
+                    })
+                    .then((downloadURL) => {
+                        console.log("file available at: ", downloadURL);
+                        const img = document.createElement("img");
+                        img.src = downloadURL;
+                        document.body.appendChild(img);
+                    })
+                    .catch((error) => {
+                        console.log("Error uploading file or getting URL: ", error);
+                    });
+            }
+
+            document.getElementById("fileInput").addEventListener("change", (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    uploadFile(file);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
